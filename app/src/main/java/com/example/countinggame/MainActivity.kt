@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mpNoo: MediaPlayer
 
     private var rightOption = 0
+    private var lastAns = 0
 
     private lateinit var myToast:Toast
 
@@ -116,7 +117,12 @@ class MainActivity : AppCompatActivity() {
         var op1Num = 0
         var op2Num = 0
         var op3Num = 0
-        val answer = findAnswer()
+        var answer = findAnswer()
+
+        // Prevent repetition of question
+        while (answer == lastAns)
+            answer = findAnswer()
+        lastAns = answer
         rightOption = Default.nextInt(1,5)
 
         when(rightOption){
