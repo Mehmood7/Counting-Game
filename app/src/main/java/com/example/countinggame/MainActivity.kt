@@ -1,6 +1,5 @@
 package com.example.countinggame
 
-
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
@@ -8,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.io.IOException
@@ -19,15 +19,22 @@ class MainActivity : AppCompatActivity() {
     private lateinit var op2:Button
     private lateinit var op3:Button
     private lateinit var op4:Button
+    private lateinit var img:ImageView
+    private lateinit var questionTV:TextView
+    private lateinit var scoreTV:TextView
+
     private lateinit var mpYes: MediaPlayer
     private lateinit var mpNoo: MediaPlayer
 
-    private lateinit var img:ImageView
     private var rightOption = 0
+
+    private lateinit var myToast:Toast
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        myToast = Toast.makeText(applicationContext,"",Toast.LENGTH_SHORT)
 
         op1 = findViewById(R.id.option_1)
         op2 = findViewById(R.id.option_2)
@@ -36,6 +43,11 @@ class MainActivity : AppCompatActivity() {
 
         img = findViewById(R.id.imageView)
 
+        questionTV = findViewById(R.id.question_text)
+        scoreTV = findViewById(R.id.score_text)
+
+        scoreTV.text = "Score: 10"
+        questionTV.text = "\tLets count them."
 
         op1.setOnClickListener {
             checkAnswer(1)
@@ -57,10 +69,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkAnswer(option:Int){
+        if (rightOption == 0) return
         if (option == rightOption) {
             print("                GOOD!!  \nYou Selected Right option")
             mpYes.start()
             val handler = Handler()
+            //rightOption = 0
             handler.postDelayed(
                 {
                     setGame()
@@ -93,7 +107,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun print(msg: String){
-        Toast.makeText(applicationContext,msg,Toast.LENGTH_SHORT).show()
+        myToast.setText(msg)
+        myToast.show()
     }
 
     private fun setGame(){
