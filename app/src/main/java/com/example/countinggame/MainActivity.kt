@@ -1,5 +1,6 @@
 package com.example.countinggame
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
@@ -28,6 +29,12 @@ class MainActivity : AppCompatActivity() {
 
     private var rightOption = 0
     private var lastAns = 0
+    private var score = 0
+    private var lives = 0
+    private var names1 = arrayOf("Apples", "Cherries", "Fish", "Peaches", "Berries", "Bees",
+        "Cats", "Apples", "Cars", "Hands", "Chicks", "Ducks")
+    private var names2 = arrayOf("Bananas", "Strawberries", "Pine-Apples", "Pizza-Slices", "Cake-Pieces", "Water-Melons",
+        "Unicorns", "Bananas", "Lemonades", "Oranges", "Soldiers", "Horses")
 
     private lateinit var myToast:Toast
 
@@ -47,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         questionTV = findViewById(R.id.question_text)
         scoreTV = findViewById(R.id.score_text)
 
-        scoreTV.text = "Score: 10"
+        scoreTV.text = "Score: 0"
         questionTV.text = "\tLets count them."
 
         op1.setOnClickListener {
@@ -63,6 +70,7 @@ class MainActivity : AppCompatActivity() {
             checkAnswer(4)
         }
 
+        lives = 3
         setGame()
 
         mpYes = MediaPlayer.create(this,R.raw.yes)
@@ -74,8 +82,10 @@ class MainActivity : AppCompatActivity() {
         if (option == rightOption) {
             print("                GOOD!!  \nYou Selected Right option")
             mpYes.start()
+            score += 3
+            scoreTV.text = "Score: $score"
             val handler = Handler()
-            //rightOption = 0
+            rightOption = 0
             handler.postDelayed(
                 {
                     setGame()
@@ -86,7 +96,18 @@ class MainActivity : AppCompatActivity() {
         }
         else{
             mpNoo.start()
+            lives--
+            if(lives == 0){
+                val sharedPref = this?.getPreferences(Context.MODE_PRIVATE) ?: return
+                with (sharedPref.edit()) {
+                    putInt("Highest_score", score)
+                    commit()
+                }
+
+                finish()
+            }
             print("   OOPS!! \n Try again")
+
         }
 
     }
@@ -157,9 +178,18 @@ class MainActivity : AppCompatActivity() {
         if(rightOption != 4) op4.text = "$wrongAns"
 
 
-
-
         val bitmap:Bitmap? = getBitmapFromAssets("pics/$answer-$variant.jpg")
         img.setImageBitmap(bitmap)
+
+        val objectName = if(variant == 1 ) names1[answer-1] else names2[answer-1]
+
+        questionTV.text = when(Default.nextInt(1,5)){
+            1 -> "Can you count the $objectName?"
+            2 -> "Lets count the $objectName."
+            3 -> "Count the $objectName in this picture."
+            4 -> "How many $objectName are in this picture."
+            else -> "Lets count them."
+        }
+
     }
 }
