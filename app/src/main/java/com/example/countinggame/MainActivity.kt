@@ -1,5 +1,6 @@
 package com.example.countinggame
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -54,7 +55,8 @@ class MainActivity : AppCompatActivity() {
         questionTV = findViewById(R.id.question_text)
         scoreTV = findViewById(R.id.score_text)
 
-        scoreTV.text = "Score: 0"
+
+        scoreTV.text = "Score: $score"
         questionTV.text = "\tLets count them."
 
         op1.setOnClickListener {
@@ -98,12 +100,14 @@ class MainActivity : AppCompatActivity() {
             mpNoo.start()
             lives--
             if(lives == 0){
-                val sharedPref = this?.getPreferences(Context.MODE_PRIVATE) ?: return
-                with (sharedPref.edit()) {
-                    putInt("Highest_score", score)
-                    commit()
+                val sharedPref = getSharedPreferences("prefs",Context.MODE_PRIVATE) ?: return
+                val highest_score = sharedPref.getInt("Highest_score", 0)
+                if(score > highest_score){
+                    with (sharedPref.edit()) {
+                        putInt("Highest_score", score)
+                        commit()
+                    }
                 }
-
                 finish()
             }
             print("   OOPS!! \n Try again")

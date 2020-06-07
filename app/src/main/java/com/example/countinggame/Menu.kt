@@ -24,6 +24,17 @@ class Menu : AppCompatActivity() {
             )
             startActivity(playIntent)
         }
+
+        hofBtn = findViewById(R.id.HOF_btn)
+        hofBtn.setOnClickListener {
+            val hofIntent = Intent(
+                this,
+                HallOfFame::class.java
+            )
+            startActivity(hofIntent)
+        }
+
+
     }
 
 
